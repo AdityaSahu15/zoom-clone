@@ -21,33 +21,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
-  // Prevent double-fetch in React StrictMode / concurrent rendering
   const fetchedRef = useRef(false);
 
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
 
-    // Clear logging out flag on mount
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('isLoggingOut');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    if (!token) {
+      setLoading(false);
+      return;
     }
 
     api.get('/api/auth/me')
       .then((res) => setUser(res.data))
-      .catch(() => setUser(null))
+      .catch(() => {
+        localStorage.removeItem('access_token');
+        setUser(null);
+      })
       .finally(() => setLoading(false));
-  }, []); // runs exactly once on mount
+  }, []);
 
-  // Stable callbacks — wrapped in useCallback so they never cause re-renders in consumers
   const login = useCallback(async (email: string, password: string) => {
     const res = await api.post('/api/auth/login', { email, password });
+    if (res.data.access_token) {
+      localStorage.setItem('access_token', res.data.access_token);
+    }
     setUser(res.data.user);
     router.push('/dashboard');
   }, [router]);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
     const res = await api.post('/api/auth/register', { name, email, password });
+    if (res.data.access_token) {
+      localStorage.setItem('access_token', res.data.access_token);
+    }
     setUser(res.data.user);
     router.push('/dashboard');
   }, [router]);
@@ -55,18 +63,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoggingOut(true);
     setLoading(true);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('isLoggingOut', 'true');
-    }
-    try {
-      await api.post('/api/auth/logout');
-    } catch (err) {
-      console.error('Logout request failed:', err);
-    }
+    localStorage.removeItem('access_token');
     setUser(null);
-    if (typeof window !== 'undefined') {
-      window.location.replace('/');
-    }
+    window.location.replace('/');
   }, []);
 
   return (

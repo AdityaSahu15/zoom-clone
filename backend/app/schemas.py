@@ -29,6 +29,7 @@ class UserOut(BaseModel):
 class TokenResponse(BaseModel):
     message: str
     user: UserOut
+    access_token: Optional[str] = None
 
 
 # ─── Meeting Schemas ──────────────────────────────────────────────────────────
