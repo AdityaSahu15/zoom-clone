@@ -1,157 +1,110 @@
-# ZoomClone — Full-Stack Video Conferencing Platform
+# Zoom Clone - Full-Stack Web App
 
-A functional Zoom clone built for the SDE Intern Full-Stack Assignment. Replicates Zoom's design, user experience, and core meeting workflows.
+Hey there! 👋 I built this fully functional Zoom clone for an SDE Intern full-stack assignment. The goal was to recreate the core meeting workflows, UI design, and user experience of the real Zoom web app.
 
-## 🚀 Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS v4 |
-| **Backend** | Python FastAPI |
-| **Database** | SQLite via SQLAlchemy |
-| **Auth** | JWT (access + refresh tokens), HTTP-only cookies |
-| **Icons** | Lucide React |
+You can check out the live version right here:
+- **Frontend (Vercel):** [https://zoom-clone-nine-pi.vercel.app/](https://zoom-clone-nine-pi.vercel.app/)
+- **Backend (Render):** [https://zoom-clone-csap.onrender.com](https://zoom-clone-csap.onrender.com)
 
 ---
 
-## ✅ Features Implemented
+## 🛠️ Tech Stack
 
-### Core Features
-- **Landing Dashboard** — Zoom-style home with live clock, action buttons, upcoming & recent meetings
-- **Instant Meeting** — Create with one click, generates unique 10-digit meeting ID and shareable invite link
-- **Join Meeting** — Enter meeting ID or use invite link, validates meeting existence
-- **Schedule Meeting** — Title, description, date/time picker, duration, auto-generates link, stored in DB
-- **Upcoming Meetings** — Sorted by date, shows host, participants, time remaining
-- **Recent Meetings** — Last 10 completed/active meetings
-
-### Authentication (Bonus)
-- JWT access token (15 min) + refresh token (7 days), stored as HTTP-only cookies
-- **401 Interceptor** — Automatically refreshes expired access tokens and retries the failed request
-- Register / Login / Logout flows
-- Protected routes redirect to `/login`
-
-### Meeting Room
-- Participant grid with avatar tiles, initials, mute status
-- Live meeting timer
-- Mute / Stop Video / Share Screen / Security controls
-- Participants panel with real-time list
-- Chat panel (placeholder)
-- Copy invite link button
-
-### Host Controls (Bonus)
-- **Mute All** participants with one click
-- **Remove** individual participants
-- **Toggle mute** for specific participants
-- **End Meeting** for all vs **Leave Meeting** for attendees
-
-### Responsive Design (Bonus)
-- Mobile → Tablet → Desktop layouts via Tailwind responsive utilities
-- Collapsed toolbar labels on mobile
-- Adaptive participant grid (1 → 4 columns based on count)
+I kept the stack pretty modern and standard:
+* **Frontend:** Next.js (App Router), React, TypeScript, Tailwind CSS
+* **Backend:** Python, FastAPI
+* **Database:** SQLite (using SQLAlchemy ORM)
+* **Authentication:** JWT tokens (stored securely in `localStorage` with `Authorization: Bearer` headers to handle cross-domain requests between Vercel and Render)
+* **Icons:** Lucide React
 
 ---
 
-## 🗄️ Database Schema
+## ✨ Features
 
-```
-users            — id, name, email, password_hash, avatar_url, created_at
-meetings         — id, meeting_id (Zoom-style), host_id, title, description,
-                   start_time, duration, is_instant, status, invite_link, created_at
-participants     — id, meeting_id, user_id, display_name, role,
-                   is_muted, is_video_on, joined_at, left_at
-```
+Here's what I managed to build out:
+
+### Core Meeting Flow
+* **Landing Dashboard:** A clean, Zoom-style home screen where you can see the current time, jump into a quick meeting, or schedule one.
+* **Instant Meetings:** One click to generate a unique 10-digit meeting ID and shareable invite link.
+* **Join Meetings:** You can pop in an ID manually or just click an invite link.
+* **Scheduled Meetings:** Fill out a title, description, and time, and it saves it right to the DB so you can join it later.
+* **History:** Shows your upcoming meetings and the last 10 recent ones you participated in.
+
+### The Meeting Room
+* Participant grid that automatically scales based on how many people are in the room.
+* Displays avatar tiles and initials.
+* Full controls: Mute, Stop Video, Security panel.
+* A live sidebar showing everyone currently in the room.
+
+### Host Controls & Security
+* Hosts can instantly mute everyone else in the room.
+* Hosts can kick individual attendees out.
+* Hosts can toggle mute statuses.
+* When the host clicks "End", it actually terminates the meeting for everyone.
+
+### Authentication
+* Full register, login, and logout flows.
+* Access tokens are issued by the FastAPI backend and persisted via `localStorage` on the frontend.
+* Protected Next.js routes (unauthenticated users get booted back to `/login`).
 
 ---
 
-## ⚙️ Setup & Run
+## 🗄️ Database Structure
 
-### Prerequisites
-- Python 3.10+ (tested on 3.14)
-- Node.js 18+
+I used a pretty simple relational setup:
+* `users` - Basic profile info and bcrypt hashed passwords.
+* `meetings` - Holds the 10-digit IDs, schedule times, status, and the host's ID.
+* `participants` - Tracks who is in what meeting, their current role (host vs attendee), and state (muted/video on).
 
-### Backend
+---
+
+## 🚀 Running it Locally
+
+If you want to spin this up on your own machine, it's pretty straightforward.
+
+**Prerequisites:** Python 3.10+ and Node.js 18+
+
+### 1. Backend
 
 ```bash
 cd backend
 python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # Mac/Linux
+
+# Windows
+venv\Scripts\activate 
+# Mac/Linux
+source venv/bin/activate
+
 pip install -r requirements.txt
-python seed.py                 # Seed database with sample data
+python seed.py  # Run this to get some dummy users and meetings!
 uvicorn app.main:app --reload --port 8000
 ```
+*The API docs will spin up at `http://localhost:8000/docs`*
 
-API docs available at: http://localhost:8000/docs
+### 2. Frontend
 
-### Frontend
-
+Open a new terminal window:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-App runs at: http://localhost:3000
-
----
-
-## 🔐 Test Credentials
-
-| Email | Password |
-|---|---|
-| alex@zoomclone.dev | password123 |
-| sarah@zoomclone.dev | password123 |
-| david@zoomclone.dev | password123 |
-| priya@zoomclone.dev | password123 |
+*The app will be running at `http://localhost:3000`*
 
 ---
 
-## 💡 Assumptions & Notes
+## 🔐 Seeded Test Accounts
 
-1. **No real video/audio** — This is a UI/UX and backend clone. Real video would require WebRTC (e.g., Daily.co, Agora, or a WebSocket-based signaling server). The participant grid shows avatar tiles.
-2. **Polling** — Participant list refreshes every 10 seconds. Production would use WebSockets.
-3. **HTTP-only cookies** — `secure: False` is set for local development. Set to `True` in production with HTTPS.
-4. **SQLite** — File-based, no external DB needed. Production would use PostgreSQL.
-5. **Screen sharing** — UI button present, marked as "coming soon" (requires WebRTC).
+If you ran `seed.py`, you can log in with any of these right away without signing up:
+
+* `alex@zoomclone.dev` - password123
+* `sarah@zoomclone.dev` - password123
+* `david@zoomclone.dev` - password123
+* `priya@zoomclone.dev` - password123
 
 ---
 
-## 📁 Project Structure
-
-```
-zoom-clone/
-├── backend/
-│   ├── app/
-│   │   ├── main.py           # FastAPI app + CORS
-│   │   ├── database.py       # SQLAlchemy setup
-│   │   ├── models.py         # ORM models
-│   │   ├── schemas.py        # Pydantic schemas
-│   │   ├── auth.py           # JWT utilities
-│   │   ├── dependencies.py   # get_current_user dep
-│   │   ├── config.py         # Settings
-│   │   └── routers/
-│   │       ├── auth.py       # Register/Login/Refresh/Logout
-│   │       ├── meetings.py   # CRUD + instant/schedule
-│   │       └── participants.py # Join/Leave/Host Controls
-│   ├── seed.py               # Sample data
-│   └── requirements.txt
-└── frontend/
-    ├── src/
-    │   ├── app/
-    │   │   ├── page.tsx              # Dashboard
-    │   │   ├── login/page.tsx
-    │   │   ├── register/page.tsx
-    │   │   ├── join/page.tsx
-    │   │   └── meeting/[id]/page.tsx # Meeting Room
-    │   ├── components/
-    │   │   ├── Navbar.tsx
-    │   │   ├── MeetingCard.tsx
-    │   │   ├── ScheduleModal.tsx
-    │   │   └── JoinModal.tsx
-    │   ├── context/
-    │   │   └── AuthContext.tsx
-    │   └── lib/
-    │       ├── api.ts          # Axios + 401 interceptor
-    │       └── types.ts
-    └── package.json
-```
+## 📝 A Few Dev Notes
+1. **No actual video feeds (yet!):** Since this assignment was heavily focused on UI/UX and full-stack API architecture, I didn't integrate WebRTC (like Agora or LiveKit). The grid renders avatar placeholders for now!
+2. **Polling over WebSockets:** The participant sidebar currently polls the backend every 10 seconds to keep the list updated. In a real production environment with video, this would be handled by WebSockets or Server-Sent Events.
+3. **Cross-Domain Auth:** Originally I tried using HTTP-only cookies, but because I deployed the frontend to Vercel and the backend to Render, modern browsers blocked the cross-site cookies due to strict tracking protections. I ripped them out and switched to token-based `localStorage` auth which works perfectly across domains.
