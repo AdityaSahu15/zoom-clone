@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --color-zoom-blue: #2D8CFF;
+  --color-zoom-orange: #FF6600;
+  --color-zoom-text-primary: #1A1A1A;
+  --color-zoom-text-secondary: #747487;
+  --color-zoom-border: #E5E5E5;
+}
+
+:root {
+  --zoom-blue: #2D8CFF;
+  --zoom-orange: #FF6600;
+  --zoom-text-primary: #1A1A1A;
+  --zoom-text-secondary: #747487;
+  --zoom-border: #E5E5E5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 150ms ease, border-color 150ms ease, opacity 150ms ease, transform 150ms ease;
+}
+
+html {
+  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  scroll-behavior: smooth;
+  background-color: #FFFFFF;
+}
+
+body {
+  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars to match professional Zoom layout */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5E5E5;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D0D0D0;
+}
+
+/* Add custom simple slide/fade animations for modals */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 200ms ease-out forwards;
+}
+
+/* Ensure all buttons look clean and uniformly padded across the site */
+button {
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* Exclude icon-only buttons from the large padding so they remain square/small */
+button:has(svg:only-child) {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
