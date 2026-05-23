@@ -7,7 +7,8 @@ from ..models import User
 from ..schemas import UserRegister, UserLogin, UserOut, TokenResponse
 from ..auth import (
     hash_password, verify_password,
-    create_access_token, create_refresh_token, decode_token
+    create_access_token, create_refresh_token, decode_token,
+    set_auth_cookies
 )
 from ..config import get_settings
 from ..dependencies import get_current_user
@@ -16,29 +17,7 @@ settings = get_settings()
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-def set_auth_cookies(response: Response, user_id: int):
-    """Helper: create both tokens and set them as HTTP-only cookies."""
-    access_token = create_access_token(data={"sub": str(user_id)})
-    refresh_token = create_refresh_token(data={"sub": str(user_id)})
 
-    # Access token cookie — short lived (15 min)
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=False,       # Set to True in production with HTTPS
-        samesite="lax",
-        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    )
-    # Refresh token cookie — long lived (7 days)
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=False,
-        samesite="lax",
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-    )
 
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)

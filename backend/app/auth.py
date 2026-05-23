@@ -45,6 +45,31 @@ def create_refresh_token(data: dict) -> str:
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
+def set_auth_cookies(response, user_id: int):
+    """Helper: create both tokens and set them as HTTP-only cookies."""
+    access_token = create_access_token(data={"sub": str(user_id)})
+    refresh_token = create_refresh_token(data={"sub": str(user_id)})
+
+    # Access token cookie — short lived
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,        # Required for samesite=none
+        samesite="none",    # Required for cross-site (Vercel <-> Render)
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    )
+    # Refresh token cookie — long lived (7 days)
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+    )
+
+
 def decode_token(token: str) -> dict:
     """
     Decode and validate a JWT token.
