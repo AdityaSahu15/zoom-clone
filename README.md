@@ -1,6 +1,6 @@
 # Zoom Clone - Full-Stack Web App
 
-Hey there! 👋 I built this fully functional Zoom clone for an SDE Intern full-stack assignment. The goal was to recreate the core meeting workflows, UI design, and user experience of the real Zoom web app.
+I built this fully functional Zoom clone for an SDE Intern full-stack assignment. The goal was to recreate the core meeting workflows, UI design, and user experience of the real Zoom web app.
 
 You can check out the live version right here:
 - **Frontend (Vercel):** [https://zoom-clone-nine-pi.vercel.app/](https://zoom-clone-nine-pi.vercel.app/)
@@ -8,7 +8,7 @@ You can check out the live version right here:
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 I kept the stack pretty modern and standard:
 * **Frontend:** Next.js (App Router), React, TypeScript, Tailwind CSS
@@ -19,7 +19,7 @@ I kept the stack pretty modern and standard:
 
 ---
 
-## ✨ Features
+##  Features
 
 Here's what I managed to build out:
 
@@ -49,7 +49,7 @@ Here's what I managed to build out:
 
 ---
 
-## 🗄️ Database Structure
+##  Database Structure
 
 I used a pretty simple relational setup:
 * `users` - Basic profile info and bcrypt hashed passwords.
@@ -58,7 +58,7 @@ I used a pretty simple relational setup:
 
 ---
 
-## 🚀 Running it Locally
+##  Running it Locally
 
 If you want to spin this up on your own machine, it's pretty straightforward.
 
@@ -91,20 +91,10 @@ npm run dev
 ```
 *The app will be running at `http://localhost:3000`*
 
----
-
-## 🔐 Seeded Test Accounts
-
-If you ran `seed.py`, you can log in with any of these right away without signing up:
-
-* `alex@zoomclone.dev` - password123
-* `sarah@zoomclone.dev` - password123
-* `david@zoomclone.dev` - password123
-* `priya@zoomclone.dev` - password123
 
 ---
 
-## 📝 A Few Dev Notes
+##  A Few Important Notes
 1. **No actual video feeds (yet!):** Since this assignment was heavily focused on UI/UX and full-stack API architecture, I didn't integrate WebRTC (like Agora or LiveKit). The grid renders avatar placeholders for now!
 2. **Polling over WebSockets:** The participant sidebar currently polls the backend every 10 seconds to keep the list updated. In a real production environment with video, this would be handled by WebSockets or Server-Sent Events.
 3. **Cross-Domain Auth:** Originally I tried using HTTP-only cookies, but because I deployed the frontend to Vercel and the backend to Render, modern browsers blocked the cross-site cookies due to strict tracking protections. I ripped them out and switched to token-based `localStorage` auth which works perfectly across domains.
